@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <style>
+        body {
+            text-align: center;
+            background-color: rgb(255, 233, 233);
+            font-size: xx-large;
+            margin-top: 7%;
+        }
+
+        button {
+            height: 150px;
+            width: 500px;
+            border: 5px solid black;
+            border-radius: 25px;
+            background-color: rgb(105, 105, 255);
+            font-size: 200%;
+            /* font-weight:bold; */
+            margin-bottom: 5%;
+            color: white;
+        }
+
+        .Taxt {
+            margin-top: 10%;
+        }
+
+        #box {
+            border: 5px solid black;
+            background-color: rgb(125, 125, 189);
+            height: 97%;
+            border-radius: 50px;
+            width: 97%;
+            display: flex;
+            justify-content: center;
+            margin-left:10px;
+        }
+
+        #inbox {
+            background-color: rgb(255, 255, 255);
+            border-radius: 50px;
+            margin: 5%;
+            padding: 5%;
+            width: 100%;
+        }
+
+        .outer {
+            border-radius: 50%;
+            margin-top: 200px;
+            display: flex;
+            justify-content: center;
+
+        }
+
+        .inner {
+            height: 300px;
+            width: 300px;
+            border-radius: 50%;
+            border: 10px solid black;
+            margin: 10px;
+        }
+
+        .red {
+            background-color: red;
+        }
+
+        .blue {
+            background-color: blue;
+        }
+
+        .yellow {
+            background-color: yellow;
+        }
+
+        .green {
+            background: green;
+        }
+
+        .over {
+            margin-top: 200px;
+        }
+
+        .flash {
+            background-color: #fff;
+        }
+
+        .userflash {
+            background-color: rgb(255, 255, 255);
+            border: 5px solid red;
+        }
+    </style>
+    
+    <title>Simon Say Game</title>
+
+</head>
+
+<body>
+    <div id="box">
+        <div id="inbox">
+            <div class="Taxt">
+                <h1>Simon Say Game</h1>
+                <h3>Press Start Button to start game.</h3>
+                <h4></h4>
+
+            </div>
+            <div class="outer">
+                <div class="line1">
+                    <div class="red inner" type="button" id="red"></div>
+                    <div class="blue inner" type="button" id="blue"></div>
+                </div>
+                <div class="line2">
+                    <div class="yellow inner" type="button" id="yellow"></div>
+                    <div class="green inner" type="button" id="green"></div>
+                </div>
+            </div>
+            <br><br><br><br><br><br>
+            <button>Start</button>
+        </div>
+    </div>
+    <script>
+        let gameSeq = [];
+        let userSeq = [];
+
+        let started = false;
+        let level = 0;
+        let btns = ['red', 'blue', 'yellow', 'green'];
+        let h3 = document.querySelector('h3');
+        let score = 0;
+        let hyscore = document.querySelector('h4');
+        let start = document.querySelector('button');
+        start.addEventListener("click", function () {
+            // hyscore.innerText = `High Score: ${prevs}`;
+            if (started == false) {
+                console.log("Game is Started");
+                started = true;
+                setTimeout(levelup, 500);
+
+            }
+        });
+
+        function btnflash(btn) {
+            btn.classList.add("flash");
+            setTimeout(function () {
+                btn.classList.remove("flash");
+            }, 250);
+        }
+
+        function levelup() {
+            userSeq = [];
+            level++;
+            h3.innerText = `level : ${level}`;
+
+            let ranidx = Math.floor(Math.random() * 4);
+            let rancolor = btns[ranidx];
+            let btncolor = document.querySelector(`.${rancolor}`);
+
+            gameSeq.push(rancolor);
+            // console.log(`Game: ${gameSeq}`);
+            btnflash(btncolor);
+        }
+
+        function checkAns(idx) {
+            // console.log("curr level : ", level);
+
+            if (userSeq[idx] === gameSeq[idx]) {
+                if (userSeq.length == gameSeq.length) {
+                    setTimeout(levelup, 1000);
+                }
+            }
+            else {
+                h3.innerHTML = `<h3>Nice Try Your : ${level - 1}<br> Enter Any key For Start.</h3>`;
+                document.querySelector('body').style.backgroundColor = 'red';
+                setTimeout(function () {
+                    document.querySelector('body').style.backgroundColor = 'white';
+                }, 100);
+                if (level > score && level > 1) {
+                    score = level - 1;
+                }
+                else {
+                    h3.innerHTML = `<h3>Try Again <br> Press Start Button For Start.</h3>`;
+                }
+                hyscore.innerText = `High Score : ${score}`;
+                reset();
+            }
+        }
+
+        function userflash(btn) {
+            btn.classList.add("userflash");
+            setTimeout(function () {
+                btn.classList.remove("userflash");
+            }, 200);
+        }
+
+        function btnPress() {
+            let btn = this;
+            userflash(btn);
+            userColor = btn.getAttribute("id");
+            // console.log(userColor);
+
+            userSeq.push(userColor);
+            // console.log(`User: ${userSeq}`);
+            checkAns(userSeq.length - 1);
+
+        }
+
+        let btnsall = document.querySelectorAll('.inner');
+        for (let btn of btnsall) {
+            btn.addEventListener("click", btnPress);
+        }
+
+        function reset() {
+            started = false;
+            gameSeq = [];
+            userSeq = [];
+            level = 0;
+        }
+    </script>
+</body>
+
+</html>
